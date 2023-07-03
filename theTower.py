@@ -76,6 +76,5 @@ def main():
         handle_block()  # Update the block position and state
         draw_window(floor, is_started)  # Draw the game window
         
-
 if __name__ == "__main__":
     main()
