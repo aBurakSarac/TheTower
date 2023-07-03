@@ -24,7 +24,7 @@ VEL = 8
 # Set up the font for displaying text
 PLAY_FONT = pg.font.SysFont("arial", 32)
 
-def draw_window(floor, is_started):
+def draw_window(floor, is_started, length = 100):
     """
     Draw the game window with the floor and a start message if the game has not started yet.
     
@@ -34,18 +34,35 @@ def draw_window(floor, is_started):
     """
     WIN.fill(SKY)  # Fill the window with sky color
     pg.draw.rect(WIN, GREEN, floor)  # Draw the floor
-    draw_text = PLAY_FONT.render("PRESS SPACE TO START", 1, WHITE)
     if is_started == False:
+        draw_text = PLAY_FONT.render("PRESS SPACE TO START", 1, WHITE)
         # If the game has not started yet, display the start message at the center of the window
         WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() / 2, HEIGHT/2 - draw_text.get_height()/2))
+
     pg.display.update()
 
-def handle_block():
+
+def move_block():
     """
     Update the state and position of the block.
     """
     # TODO: Add the implementation for handling the block
+    """
+        1) Create new block.
+        2) Move the block until the key is pressed.
+        3) Call place_block().
+    """
     pass
+
+def place_block():
+    """ 
+        1) Compare with the block below.
+        2) Cut if perfect timing is failed.
+        3) Fix the position of the block.
+        4) Increase score by the length of the block.
+    """
+    pass
+
 
 def draw_score():
     """
@@ -70,11 +87,16 @@ def main():
                 run = False
                 pg.quit()
 
-            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE and is_started == False:
-                    is_started = True
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                if is_started == True:
+                    #TODO: place_block()
+                    pass
+                else:
+                    is_started=True
 
-        handle_block()  # Update the block position and state
+                    
         draw_window(floor, is_started)  # Draw the game window
+        move_block()  # Update the block position and state
         
 if __name__ == "__main__":
     main()
