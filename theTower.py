@@ -53,6 +53,7 @@ def draw_score():
     """
     # TODO: Add the implementation for drawing the score
     pass
+
 def main():
     # Set up the game clock
     clock = pg.time.Clock()
@@ -65,12 +66,11 @@ def main():
         clock.tick(FPS)  # Limit the game loop to a specific frame rate
 
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 run = False
                 pg.quit()
 
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE and is_started == False:
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE and is_started == False:
                     is_started = True
 
         handle_block()  # Update the block position and state
