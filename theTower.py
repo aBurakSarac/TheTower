@@ -50,7 +50,30 @@ def draw_window(floor, is_started,blocks):
     pg.display.update()
 
 def create_block(block_altitude, block_length,blocks):
+    """
+    if [-1].right > [-2].right:
+        length -= right - [-2].right
+
+    if [-1].x < [-2].x:
+        length = [-2].right - [-1].x
+    else:
+        length = [-1].x + length - [-2].x
+    
+    [-1].x
+    [-1].x + length
+    [-2].x
+    [-2].x + length
+    """
+    """
     new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT)
+    if len(blocks) >= 1:
+        if new_block.right > blocks[-1].right:
+            block_length -= new_block.right - blocks[-1].right
+        elif new_block.left < blocks[-1].left:
+            block_length -= blocks[-1].left - new_block.left
+    """
+    new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT)
+    print("Block Length: " + str(block_length))
     blocks.append(new_block)
 
 
@@ -105,20 +128,7 @@ def main():
                     is_started = True
                 create_block(block_altitude, block_length, blocks)
                 block_altitude -= BLOCK_HEIGHT
-            
-                """
-                if [-1].x + [-1].width > [-2].x + [-2].width:
-                    length -= [-1].x + [-1].width - [-2].x - [-2].width
 
-                if [-1].x > [-2].x:
-                    length = [-2].x + length - [-1].x
-                else:
-                    length = [-1].x + length - [-2].x
-                [-1].x
-                [-1].x + length
-                [-2].x
-                [-2].x + length
-                """
             if event.type == MOVE_FORWARD:
                 is_forward = True
             elif event.type == MOVE_BACKWARDS:
