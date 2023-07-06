@@ -11,20 +11,25 @@ WIDTH, HEIGHT = 500, 1000
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("The Tower")
 
+
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 128, 0)
 SKY = (48, 172, 255)
+BLOCK_COLOR = (232, 190, 172)
 
-# Set the frames per second and velocity of the block
+# Set the fixed values
 FPS = 60
-VEL = 8
-
+VEL = 4
+BLOCK_HEIGHT = 40
 # Set up the font for displaying text
 PLAY_FONT = pg.font.SysFont("arial", 32)
 
-def draw_window(floor, is_started, length = 100):
+MOVE_FORWARD = pg.USEREVENT + 1
+MOVE_BACKWARDS = pg.USEREVENT + 2
+
+def draw_window(floor, is_started,blocks):
     """
     Draw the game window with the floor and a start message if the game has not started yet.
     
@@ -38,11 +43,18 @@ def draw_window(floor, is_started, length = 100):
         draw_text = PLAY_FONT.render("PRESS SPACE TO START", 1, WHITE)
         # If the game has not started yet, display the start message at the center of the window
         WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() / 2, HEIGHT/2 - draw_text.get_height()/2))
+    
+    for block in blocks:
+        pg.draw.rect(WIN, BLOCK_COLOR, block)
 
     pg.display.update()
 
+def create_block(block_altitude, block_length,blocks):
+    new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT)
+    blocks.append(new_block)
 
-def move_block():
+
+def move_block(block_altitude, block_length,blocks, is_forward):
     """
     Update the state and position of the block.
     """
@@ -50,18 +62,16 @@ def move_block():
     """
         1) Create new block.
         2) Move the block until the key is pressed.
-        3) Call place_block().
     """
-    pass
-
-def place_block():
-    """ 
-        1) Compare with the block below.
-        2) Cut if perfect timing is failed.
-        3) Fix the position of the block.
-        4) Increase score by the length of the block.
-    """
-    pass
+    if blocks[-1].x + block_length >= WIDTH:
+        pg.event.post(pg.event.Event(MOVE_BACKWARDS))
+    elif blocks[-1].x <= 0 and is_forward == False:
+        pg.event.post(pg.event.Event(MOVE_FORWARD))
+    
+    if is_forward:
+        blocks[-1].x += VEL
+    else:
+        blocks[-1].x -= VEL
 
 
 def draw_score():
@@ -74,10 +84,13 @@ def draw_score():
 def main():
     # Set up the game clock
     clock = pg.time.Clock()
-
+    
+    blocks=[]
+    block_altitude, block_length = 860, 256 
     run = True
     floor = pg.Rect(0, 900, WIDTH, 100)  # Create a rectangle representing the floor
     is_started = False
+    is_forward = True
 
     while run:
         clock.tick(FPS)  # Limit the game loop to a specific frame rate
@@ -88,17 +101,37 @@ def main():
                 pg.quit()
 
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                if is_started == True:
-                    #TODO: place_block()
-                    pass
-                else:
-                    is_started=True
+                if is_started == False:
+                    is_started = True
+                create_block(block_altitude, block_length, blocks)
+                block_altitude -= BLOCK_HEIGHT
+            
+                """
+                if [-1].x + [-1].width > [-2].x + [-2].width:
+                    length -= [-1].x + [-1].width - [-2].x - [-2].width
 
-                    
-        draw_window(floor, is_started)  # Draw the game window
-        move_block()  # Update the block position and state
+                if [-1].x > [-2].x:
+                    length = [-2].x + length - [-1].x
+                else:
+                    length = [-1].x + length - [-2].x
+                [-1].x
+                [-1].x + length
+                [-2].x
+                [-2].x + length
+                """
+            if event.type == MOVE_FORWARD:
+                is_forward = True
+            elif event.type == MOVE_BACKWARDS:
+                is_forward = False
+                
+        if is_started:
+            move_block(block_altitude, block_length, blocks, is_forward)  # Update the block position and state
+        
+        draw_window(floor, is_started, blocks)  # Draw the game window
+
+        if block_length <= 0:
+            pg.quit()
+        
         
 if __name__ == "__main__":
     main()
-
- 
