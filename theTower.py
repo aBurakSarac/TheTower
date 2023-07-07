@@ -51,41 +51,24 @@ def draw_window(floor, is_started,blocks):
     pg.display.update()
 
 def create_block(block_altitude, block_length,blocks):
-    """
-    if [-1].right > [-2].right:
-        length -= right - [-2].right
-
-    if [-1].x < [-2].x:
-        length = [-2].right - [-1].x
-    else:
-        length = [-1].x + length - [-2].x
-    
-    [-1].x
-    [-1].x + length
-    [-2].x
-    [-2].x + length
-    """
-    """
-    new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT)
-    if len(blocks) >= 1:
-        if new_block.right > blocks[-1].right:
-            block_length -= new_block.right - blocks[-1].right
-        elif new_block.left < blocks[-1].left:
-            block_length -= blocks[-1].left - new_block.left
-    """
-    new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT)
-    print("Block Length: " + str(block_length))
+    if(len(blocks) > 1):
+        if blocks[-1].left < blocks[-2].left:
+            blocks[-1] = pg.Rect(blocks[-2].x, blocks[-1].y, block_length, BLOCK_HEIGHT)
+        elif blocks[-1].right > blocks[-2].right:
+            blocks[-1] = pg.Rect(blocks[-1].x, blocks[-1].y, block_length, BLOCK_HEIGHT)
+    new_block = pg.Rect(0, block_altitude, block_length, BLOCK_HEIGHT) 
     blocks.append(new_block)
 
+def calculate_block_size(blocks):
+    if blocks[-1].right > blocks[-2].right:
+        return blocks[-1].right - blocks[-2].right
+    elif blocks[-1].left < blocks[-2].left:
+        return blocks[-2].left - blocks[-1].left    
 
-def move_block(block_altitude, block_length,blocks, is_forward):
+
+def move_block(block_length,blocks, is_forward):
     """
     Update the state and position of the block.
-    """
-    # TODO: Add the implementation for handling the block
-    """
-        1) Create new block.
-        2) Move the block until the key is pressed.
     """
     if blocks[-1].x + block_length >= WIDTH:
         pg.event.post(pg.event.Event(MOVE_BACKWARDS))
@@ -110,7 +93,9 @@ def main():
     clock = pg.time.Clock()
     
     blocks=[]
-    block_altitude, block_length = HEIGHT - FLOOR_HEIGHT - BLOCK_HEIGHT, WIDTH // 2
+    block_altitude = HEIGHT - FLOOR_HEIGHT - BLOCK_HEIGHT
+    block_length =  WIDTH // 2
+
     run = True
     floor = pg.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)  # Create a rectangle representing the floor
     is_started = False
@@ -127,8 +112,14 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 if is_started == False:
                     is_started = True
+                
+                if len(blocks) >= 2:
+                    block_length -= calculate_block_size(blocks)
+                
+                
                 create_block(block_altitude, block_length, blocks)
                 block_altitude -= BLOCK_HEIGHT
+                
 
             if event.type == MOVE_FORWARD:
                 is_forward = True
@@ -136,7 +127,7 @@ def main():
                 is_forward = False
                 
         if is_started:
-            move_block(block_altitude, block_length, blocks, is_forward)  # Update the block position and state
+            move_block(block_length, blocks, is_forward)  # Update the block position and state
         
         draw_window(floor, is_started, blocks)  # Draw the game window
 
