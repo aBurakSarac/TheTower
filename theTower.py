@@ -99,6 +99,7 @@ def main():
     run = True
     floor = pg.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)  # Create a rectangle representing the floor
     is_started = False
+    is_finished = False
     is_forward = True
 
     while run:
@@ -115,7 +116,8 @@ def main():
                 
                 if len(blocks) >= 2:
                     block_length -= calculate_block_size(blocks)
-                
+                    if block_length <= 0:
+                        is_finished = True
                 
                 create_block(block_altitude, block_length, blocks)
                 block_altitude -= BLOCK_HEIGHT
@@ -126,13 +128,11 @@ def main():
             elif event.type == MOVE_BACKWARDS:
                 is_forward = False
                 
-        if is_started:
+        if is_started and not is_finished:
             move_block(block_length, blocks, is_forward)  # Update the block position and state
         
         draw_window(floor, is_started, blocks)  # Draw the game window
 
-        if block_length <= 0:
-            pg.quit()
         
         
 if __name__ == "__main__":
