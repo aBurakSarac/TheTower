@@ -6,11 +6,13 @@ import os
 pg.font.init()
 pg.mixer.init()
 
-# Set up the window dimensions
-WIDTH, HEIGHT = 500, 1000
+# Set up the dimensions
+WIDTH, HEIGHT = 360, 640
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("The Tower")
 
+BLOCK_HEIGHT = HEIGHT // 25
+FLOOR_HEIGHT = HEIGHT//10
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -22,7 +24,6 @@ BLOCK_COLOR = (232, 190, 172)
 # Set the fixed values
 FPS = 60
 VEL = 4
-BLOCK_HEIGHT = 40
 # Set up the font for displaying text
 PLAY_FONT = pg.font.SysFont("arial", 32)
 
@@ -109,9 +110,9 @@ def main():
     clock = pg.time.Clock()
     
     blocks=[]
-    block_altitude, block_length = 860, 256 
+    block_altitude, block_length = HEIGHT - FLOOR_HEIGHT - BLOCK_HEIGHT, WIDTH // 2
     run = True
-    floor = pg.Rect(0, 900, WIDTH, 100)  # Create a rectangle representing the floor
+    floor = pg.Rect(0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT)  # Create a rectangle representing the floor
     is_started = False
     is_forward = True
 
