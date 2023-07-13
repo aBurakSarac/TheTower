@@ -1,7 +1,7 @@
 import pygame as pg
 #import os
 #import shelve
-VERSION =  "0.2.0"
+VERSION =  "0.3.0"
 
 # Initialize pygame modules
 pg.font.init()
@@ -14,17 +14,19 @@ pg.display.set_caption(f"The Tower - {VERSION}")
 
 BLOCK_HEIGHT = HEIGHT // 25
 FLOOR_HEIGHT = HEIGHT//10
+FINISH_LINE = pg.Rect(0, 20, WIDTH, 10)
 
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 128, 0)
+RED = (128,0,0)
 SKY = (48, 172, 255)
 BLOCK_COLOR = (232, 190, 172)
 
 # Set the fixed values
 FPS = 60
-VEL = 6
+VEL = 1
 # Set up the font for displaying text
 PLAY_FONT1 = pg.font.SysFont("arial", 32)
 PLAY_FONT2 = pg.font.SysFont("arial", 50)
@@ -32,7 +34,7 @@ PLAY_FONT2 = pg.font.SysFont("arial", 50)
 MOVE_FORWARD = pg.USEREVENT + 1
 MOVE_BACKWARDS = pg.USEREVENT + 2
 
-def draw_window(floor, is_started,blocks, score, is_finished):
+def draw_window(floor, is_started,blocks, score):
     """
     Draw the game window with the floor and a start message if the game has not started yet.
     
@@ -42,6 +44,7 @@ def draw_window(floor, is_started,blocks, score, is_finished):
     """
     WIN.fill(SKY)  # Fill the window with sky color
     pg.draw.rect(WIN, GREEN, floor)  # Draw the floor
+    pg.draw.rect(WIN, RED, FINISH_LINE)
     if is_started == False:
         start_game()
 
@@ -49,8 +52,10 @@ def draw_window(floor, is_started,blocks, score, is_finished):
         pg.draw.rect(WIN, BLOCK_COLOR, block)
     
     draw_score(score)
-    if is_finished:
+    """if is_finished:
         game_over(score)
+    """
+    
     pg.display.update()
 
 
@@ -73,6 +78,14 @@ def game_over(score):
     WIN.blit(draw_game_over, (WIDTH/2 - draw_game_over.get_width() / 2, HEIGHT/2 - draw_game_over.get_height()/2- draw_last_score.get_height()))
     WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
     #WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
+    pg.display.update()
+
+def well_done(score):
+    draw_well_done = PLAY_FONT2.render("WELL DONE", 1, WHITE)
+    draw_last_score = PLAY_FONT2.render("SCORE: " + str(score), 1, WHITE)
+    WIN.blit(draw_well_done, (WIDTH/2 - draw_well_done.get_width() / 2, HEIGHT/2 - draw_well_done.get_height()/2- draw_last_score.get_height()))
+    WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
+    pg.display.update()
 
 """
 def save_score(score):
@@ -171,9 +184,20 @@ def main():
                 
         if is_started and not is_finished:
             move_block(block_length, blocks, is_forward)  # Update the block position and state
-        
-        draw_window(floor, is_started, blocks, score, is_finished)  # Draw the game window
 
+        if block_altitude <= 0:
+            well_done(score)
+            pg.time.delay(5000)
+            break
+
+        if is_finished:
+            game_over(score)
+            pg.time.delay(5000)
+            break
+
+        
+        draw_window(floor, is_started, blocks, score)  # Draw the game window
+    main()
         
         
 if __name__ == "__main__":
