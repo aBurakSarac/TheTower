@@ -1,6 +1,6 @@
 import pygame as pg
-import os
-#Version 0.1.1
+#import os
+VERSION =  "0.1.1"
 
 # Initialize pygame modules
 pg.font.init()
@@ -9,7 +9,7 @@ pg.mixer.init()
 # Set up the dimensions
 WIDTH, HEIGHT = 360, 640
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("The Tower")
+pg.display.set_caption(f"The Tower - {VERSION}")
 
 BLOCK_HEIGHT = HEIGHT // 25
 FLOOR_HEIGHT = HEIGHT//10
