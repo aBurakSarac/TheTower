@@ -1,7 +1,7 @@
 import pygame as pg
 #import os
 #import shelve
-VERSION =  "0.1.1"
+VERSION =  "0.2.0"
 
 # Initialize pygame modules
 pg.font.init()
