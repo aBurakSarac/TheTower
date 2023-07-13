@@ -78,10 +78,15 @@ def game_over(score):
     pg.display.update()
 
 def well_done(score):
+    save_score(score)
+    high_score = read_hi_score()
     draw_well_done = PLAY_FONT2.render("WELL DONE", 1, WHITE)
     draw_last_score = PLAY_FONT2.render("SCORE: " + str(score), 1, WHITE)
+    if(high_score >= score):
+        draw_high_score = PLAY_FONT1.render("HIGH SCORE " + str(high_score), 1, WHITE)
     WIN.blit(draw_well_done, (WIDTH/2 - draw_well_done.get_width() / 2, HEIGHT/2 - draw_well_done.get_height()/2- draw_last_score.get_height()))
     WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
+    WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
     pg.display.update()
 
 def save_score(score):
