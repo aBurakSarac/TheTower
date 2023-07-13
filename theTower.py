@@ -26,7 +26,7 @@ BLOCK_COLOR = (232, 190, 172)
 
 # Set the fixed values
 FPS = 60
-VEL = 1
+VEL = 6
 # Set up the font for displaying text
 PLAY_FONT1 = pg.font.SysFont("arial", 32)
 PLAY_FONT2 = pg.font.SysFont("arial", 50)
@@ -52,10 +52,6 @@ def draw_window(floor, is_started,blocks, score):
         pg.draw.rect(WIN, BLOCK_COLOR, block)
     
     draw_score(score)
-    """if is_finished:
-        game_over(score)
-    """
-    
     pg.display.update()
 
 
