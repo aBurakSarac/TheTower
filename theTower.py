@@ -1,7 +1,7 @@
 import pygame as pg
 #import os
-#import shelve
-VERSION =  "0.3.0"
+import shelve
+VERSION =  "0.3.1"
 
 # Initialize pygame modules
 pg.font.init()
@@ -65,15 +65,16 @@ def draw_score(score):
     WIN.blit(draw_score, (WIDTH - draw_score.get_width() - WIDTH / 20, HEIGHT / 20 + draw_score.get_height()/2))
 
 def game_over(score):
-    #save_score(score)
-    #high_score = read_hi_score()
+    save_score(score)
+    high_score = read_hi_score()
     draw_game_over = PLAY_FONT2.render("GAME OVER", 1, WHITE)
     draw_last_score = PLAY_FONT2.render("SCORE: " + str(score), 1, WHITE)
-    #if(high_score >= score):
-    #    draw_high_score = PLAY_FONT1.render("HIGH SCORE " + str(high_score), 1, WHITE)
+    if(high_score >= score):
+        draw_high_score = PLAY_FONT1.render("HIGH SCORE " + str(high_score), 1, WHITE)
     WIN.blit(draw_game_over, (WIDTH/2 - draw_game_over.get_width() / 2, HEIGHT/2 - draw_game_over.get_height()/2- draw_last_score.get_height()))
     WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
-    #WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
+    WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
+
     pg.display.update()
 
 def well_done(score):
@@ -83,20 +84,27 @@ def well_done(score):
     WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
     pg.display.update()
 
-"""
 def save_score(score):
     d = shelve.open('score.txt')
-    if score > d['score']:
-        d['score'] = score
+    d['score'] = score
+    try:
+        if score > d['high_score']:
+            d['high_score'] = score
+    except:
+        d['high_score'] = score
     d.close()
 
 def read_hi_score():
     d = shelve.open('score.txt')
-    hi_score = d['score']
+    try:
+        hi_score = d['high_score']
+    except:
+        d['high_score'] = d['score']
+        hi_score = d['high_score']
     print(hi_score)
     d.close()
     return hi_score
-    """
+    
 
 def create_block(block_altitude, block_length,blocks):
     if(len(blocks) > 1):
