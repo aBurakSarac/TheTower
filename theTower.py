@@ -26,7 +26,7 @@ BLOCK_COLOR = (232, 190, 172)
 
 # Set the fixed values
 FPS = 60
-VEL = 6
+VEL = 2
 # Set up the font for displaying text
 PLAY_FONT1 = pg.font.SysFont("arial", 32)
 PLAY_FONT2 = pg.font.SysFont("arial", 50)
@@ -169,6 +169,9 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 if is_started == False:
                     is_started = True
+
+                if is_finished:
+                    main()
                 
                 if len(blocks) >= 2:
                     cut_size = calculate_block_size(blocks)
@@ -178,6 +181,17 @@ def main():
                     if block_length <= 0:
                         block_length = 0
                         is_finished = True
+
+                if is_finished:
+                    game_over(score)
+                    pg.time.delay(200)
+                    break
+
+                if len(blocks)>1 and blocks[-1].colliderect(FINISH_LINE) :
+                    well_done(score)
+                    pg.time.delay(200)
+                    is_finished=True
+                    break
                         
                 if not is_finished and len(blocks) >= 1:
                     score += block_length
@@ -194,19 +208,9 @@ def main():
         if is_started and not is_finished:
             move_block(block_length, blocks, is_forward)  # Update the block position and state
 
-        if block_altitude <= 0:
-            well_done(score)
-            pg.time.delay(5000)
-            break
-
-        if is_finished:
-            game_over(score)
-            pg.time.delay(5000)
-            break
-
-        
-        draw_window(floor, is_started, blocks, score)  # Draw the game window
-    main()
+        if not is_finished:
+            draw_window(floor, is_started, blocks, score)  # Draw the game window
+    
         
         
 if __name__ == "__main__":
