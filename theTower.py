@@ -1,6 +1,7 @@
+#Required libraries
 import pygame as pg
-#import os
 import shelve
+
 VERSION =  "0.3.2"
 
 # Initialize pygame modules
@@ -27,12 +28,15 @@ BLOCK_COLOR = (232, 190, 172)
 # Set the fixed values
 FPS = 60
 VEL = 6
+
 # Set up the font for displaying text
 PLAY_FONT1 = pg.font.SysFont("arial", 32)
 PLAY_FONT2 = pg.font.SysFont("arial", 50)
 
+#Set up custom events
 MOVE_FORWARD = pg.USEREVENT + 1
 MOVE_BACKWARDS = pg.USEREVENT + 2
+
 
 def draw_window(floor, is_started,blocks, score):
     """
@@ -48,7 +52,7 @@ def draw_window(floor, is_started,blocks, score):
     if is_started == False:
         start_game()
 
-    for block in blocks:
+    for block in blocks: #Draws the placed blocks
         pg.draw.rect(WIN, BLOCK_COLOR, block)
     
     draw_score(score)
@@ -74,7 +78,6 @@ def game_over(score):
     WIN.blit(draw_game_over, (WIDTH/2 - draw_game_over.get_width() / 2, HEIGHT/2 - draw_game_over.get_height()/2- draw_last_score.get_height()))
     WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
     WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
-
     pg.display.update()
 
 def well_done(score):
@@ -109,7 +112,6 @@ def read_hi_score():
     d.close()
     return hi_score
     
-
 def create_block(block_altitude, block_length,blocks):
     if(len(blocks) > 1):
         if blocks[-1].left < blocks[-2].left:
@@ -165,13 +167,16 @@ def main():
                 run = False
                 pg.quit()
 
+            #When the game isn't started, pressing Spacebar starts the game
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 if is_started == False:
                     is_started = True
 
+                #If the game is finished, restart a new game by calling main() function
                 if is_finished:
                     main()
                 
+                #When the user gets a perfect placement, earns a bonus score of max points, if the block length reachees 0, the game ends
                 if len(blocks) >= 2:
                     cut_size = calculate_block_size(blocks)
                     block_length -= cut_size
@@ -181,24 +186,26 @@ def main():
                         block_length = 0
                         is_finished = True
 
+                #Calls when block length reaches 0
                 if is_finished:
                     game_over(score)
                     pg.time.delay(200)
                     break
 
+                #Calls when the tower reaches the top
                 if len(blocks)>1 and blocks[-1].colliderect(FINISH_LINE) :
                     well_done(score)
                     pg.time.delay(200)
                     is_finished=True
                     break
-                        
+                
                 if not is_finished and len(blocks) >= 1:
                     score += block_length
                 
                 create_block(block_altitude, block_length, blocks)
                 block_altitude -= BLOCK_HEIGHT
                 
-
+            #Tracks the moving direction with custom events
             if event.type == MOVE_FORWARD:
                 is_forward = True
             elif event.type == MOVE_BACKWARDS:
