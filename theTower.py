@@ -1,7 +1,7 @@
 import pygame as pg
 #import os
 import shelve
-VERSION =  "0.3.1"
+VERSION =  "0.3.2"
 
 # Initialize pygame modules
 pg.font.init()
@@ -26,7 +26,7 @@ BLOCK_COLOR = (232, 190, 172)
 
 # Set the fixed values
 FPS = 60
-VEL = 2
+VEL = 6
 # Set up the font for displaying text
 PLAY_FONT1 = pg.font.SysFont("arial", 32)
 PLAY_FONT2 = pg.font.SysFont("arial", 50)
@@ -106,7 +106,6 @@ def read_hi_score():
     except:
         d['high_score'] = d['score']
         hi_score = d['high_score']
-    print(hi_score)
     d.close()
     return hi_score
     
