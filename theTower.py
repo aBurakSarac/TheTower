@@ -2,7 +2,7 @@
 import pygame as pg
 import shelve
 
-VERSION =  "0.3.2"
+VERSION =  "0.4.0"
 
 # Initialize pygame modules
 pg.font.init()
@@ -15,7 +15,6 @@ pg.display.set_caption(f"The Tower - {VERSION}")
 
 BLOCK_HEIGHT = HEIGHT // 25
 FLOOR_HEIGHT = HEIGHT//10
-FINISH_LINE = pg.Rect(0, 20, WIDTH, 10)
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -47,13 +46,14 @@ def draw_window(floor, is_started,blocks, score):
         is_started (bool): Flag indicating if the game has started or not.
     """
     WIN.fill(SKY)  # Fill the window with sky color
-    pg.draw.rect(WIN, GREEN, floor)  # Draw the floor
-    pg.draw.rect(WIN, RED, FINISH_LINE)
+    if floor.y < HEIGHT:
+        pg.draw.rect(WIN, GREEN, floor)  # Draw the floor
     if is_started == False:
         start_game()
 
     for block in blocks: #Draws the placed blocks
-        pg.draw.rect(WIN, BLOCK_COLOR, block)
+        if block.y < HEIGHT:
+            pg.draw.rect(WIN, BLOCK_COLOR, block)
     
     draw_score(score)
     pg.display.update()
@@ -80,17 +80,6 @@ def game_over(score):
     WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
     pg.display.update()
 
-def well_done(score):
-    save_score(score)
-    high_score = read_hi_score()
-    draw_well_done = PLAY_FONT2.render("WELL DONE", 1, WHITE)
-    draw_last_score = PLAY_FONT2.render("SCORE: " + str(score), 1, WHITE)
-    if(high_score >= score):
-        draw_high_score = PLAY_FONT1.render("HIGH SCORE " + str(high_score), 1, WHITE)
-    WIN.blit(draw_well_done, (WIDTH/2 - draw_well_done.get_width() / 2, HEIGHT/2 - draw_well_done.get_height()/2- draw_last_score.get_height()))
-    WIN.blit(draw_last_score, (WIDTH/2 - draw_last_score.get_width() / 2, HEIGHT/2 - draw_last_score.get_height()/2))
-    WIN.blit(draw_high_score, (WIDTH/2 - draw_high_score.get_width() / 2, HEIGHT/2 - draw_high_score.get_height()/2 + draw_last_score.get_height()))
-    pg.display.update()
 
 def save_score(score):
     d = shelve.open('score.txt')
@@ -141,7 +130,22 @@ def move_block(block_length,blocks, is_forward):
         blocks[-1].x += VEL
     else:
         blocks[-1].x -= VEL
-    
+
+#TODO    
+def move_camera_up(blocks, floor):
+    #if  len(blocks) > 0 and blocks[-1].y > 0:
+        for block in blocks:
+            block.y += BLOCK_HEIGHT
+        floor.y += BLOCK_HEIGHT
+
+#TODO
+"""
+def move_camera_down(blocks, floor):
+    #if  floor.y <= FLOOR_HEIGHT:
+        for block in blocks:
+            block.y -= BLOCK_HEIGHT
+        floor.y -= BLOCK_HEIGHT
+"""
 
 def main():
     # Set up the game clock
@@ -191,20 +195,29 @@ def main():
                     game_over(score)
                     pg.time.delay(200)
                     break
-
-                #Calls when the tower reaches the top
-                if len(blocks)>1 and blocks[-1].colliderect(FINISH_LINE) :
-                    well_done(score)
-                    pg.time.delay(200)
-                    is_finished=True
-                    break
+                
                 
                 if not is_finished and len(blocks) >= 1:
                     score += block_length
                 
                 create_block(block_altitude, block_length, blocks)
-                block_altitude -= BLOCK_HEIGHT
                 
+                if block_altitude > HEIGHT / 4:
+                    block_altitude -= BLOCK_HEIGHT
+                else:
+                    move_camera_up(blocks, floor)
+            
+            #TODO
+            """
+            if event.type == pg.MOUSEWHEEL:
+                if event.y > 0: #Scrolled up
+                    move_camera_up(blocks,floor)
+                    block_altitude += BLOCK_HEIGHT
+                elif event.y < 0: #Scrolled down
+                    move_camera_down(blocks,floor)
+                    block_altitude -= BLOCK_HEIGHT
+            """
+
             #Tracks the moving direction with custom events
             if event.type == MOVE_FORWARD:
                 is_forward = True
@@ -217,7 +230,6 @@ def main():
         if not is_finished:
             draw_window(floor, is_started, blocks, score)  # Draw the game window
     
-        
-        
+    
 if __name__ == "__main__":
     main()
